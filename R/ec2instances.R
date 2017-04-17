@@ -36,20 +36,32 @@
 #' @importFrom  jsonlite fromJSON
 #' @docType data
 #' @name ec2instances
-ec2instances <- within(
-  jsonlite::fromJSON("http://www.ec2instances.info/instances.json"),
-  {
-    pricing <- rapply(pricing, as.numeric, how="replace")
-    ECU <- as.integer(ECU)
-    generation <- as.factor(generation)
-    network_performance <- as.factor(network_performance)
-    family <- as.factor(family)
+#' @export
+ec2instances <- data.frame()
 
-    class(arch) <- 'arch'
-    class(linux_virtualization_types) <- 'linux_virtualization_types'
-    class(pricing) <- c('pricing', 'data.frame')
-    class(storage) <- c('storage', 'data.frame')
-    class(vpc) <- c('vpc', 'data.frame')
-  }
-)
-rownames(ec2instances) <- ec2instances$instance_type
+
+.onLoad <- function(libname, pkgname) {
+
+  message('downloading instance info')
+  x <- jsonlite::fromJSON("http://www.ec2instances.info/instances.json")
+  suppressWarnings(
+    x <- within(x,
+      {
+        pricing <- rapply(pricing, as.numeric, how="replace")
+        ECU <- as.integer(ECU)
+        generation <- as.factor(generation)
+        network_performance <- as.factor(network_performance)
+        family <- as.factor(family)
+
+        class(arch) <- 'arch'
+        class(linux_virtualization_types) <- 'linux_virtualization_types'
+        class(pricing) <- c('pricing', 'data.frame')
+        class(storage) <- c('storage', 'data.frame')
+        class(vpc) <- c('vpc', 'data.frame')
+      }
+    )
+  )
+  rownames(x) <- x$instance_type
+
+  ec2instances <<- x
+}

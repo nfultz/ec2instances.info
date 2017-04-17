@@ -5,7 +5,6 @@
 #'
 #' @examples
 #'
-#' #data(ec2instances)
 #' plot(memory~vCPU, ec2instances)
 #'
 #' @name ec2instances.info-package
