@@ -42,7 +42,7 @@ ec2instances <- data.frame()
 
 .onLoad <- function(libname, pkgname) {
 
-  message('downloading instance info')
+  packageStartupMessage('downloading instance info')
   x <- jsonlite::fromJSON("http://www.ec2instances.info/instances.json")
   suppressWarnings(
     x <- within(x,
